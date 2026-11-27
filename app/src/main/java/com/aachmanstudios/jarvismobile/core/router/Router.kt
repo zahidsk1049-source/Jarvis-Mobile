@@ -30,8 +30,7 @@ class Router {
  var hour=it.groupValues[1].toInt();val minute=it.groupValues[2].ifEmpty{"0"}.toInt();val meridian=it.groupValues[3].lowercase()
  if(meridian.isNotEmpty()){if(hour !in 1..12)return null;hour=hour%12+if(meridian=="pm")12 else 0}
  return call("set_alarm","time" to "%02d:%02d".format(java.util.Locale.ROOT,hour,minute),"label" to it.groupValues[4].ifBlank{"Jarvis"})
- }
- Regex("(?i)^(?:remember(?: that)?|create (?:a )?note[:]?|note[:]) (.+)$",RegexOption.DOT_MATCHES_ALL).matchEntire(s)?.let{return call("create_note","text" to it.groupValues[1])}
+ }Regex("^(?:remember(?: that)?|create (?:a )?note:?|note:) (.+)$",setOf(RegexOption.IGNORE_CASE,RegexOption.DOT_MATCHES_ALL)).matchEntire(s)?.let{return call("create_note","text" to it.groupValues[1])}
  if(Regex("(?i)^(what did i ask you to remember|read(?: my)? notes|show(?: my)? notes)[?.!]?$").matches(s))return call("read_notes")
  if(Regex("(?i)^(device info|device information|phone info|battery status)[?.!]?$").matches(s))return call("device_info")
  Regex("(?i)^(play|pause|next|previous)(?: (?:music|media|track))?[.!]?$").matchEntire(s)?.let{return call("media_control","action" to it.groupValues[1].lowercase())}
